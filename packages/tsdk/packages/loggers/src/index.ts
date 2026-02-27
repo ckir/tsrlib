@@ -1,12 +1,16 @@
 import pino from 'pino';
-import socket from 'net';
 
-// Stream to Vector's TCP source
-const vectorStream = socket.connect(9000, '127.0.0.1');
+const transport = pino.transport({
+  target: 'pino-socket',
+  options: {
+    address: '127.0.0.1',
+    port: 9000,
+    mode: 'tcp',
+    reconnect: true,
+  },
+});
 
-export const logger = pino({
-  level: 'info',
-  base: { section: 'tsdk' }
-}, vectorStream);
-
-export const LoggersSection = { logger };
+export const LoggersSection = {
+  // We use the transport for high-performance non-blocking logs
+  logger: pino(transport),
+};

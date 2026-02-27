@@ -2,12 +2,13 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node",
     "strict": true,
     "declaration": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "baseUrl": ".",
+    "types": ["node", "bun"],
     "paths": {
       "@tsrlib/*": [
         "packages/tsdk/packages/*/src/index.ts"

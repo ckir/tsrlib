@@ -7,13 +7,9 @@ dist
 target
 Cargo.lock
 
-# NAPI-RS Output
-packages/tsdk/src/rsdk.js
-packages/tsdk/src/rsdk.d.ts
-packages/tsdk/npm
-
 # Sidecars & OS
 .bin
 .DS_Store
 .env
+*.node
 tsrlib.txt

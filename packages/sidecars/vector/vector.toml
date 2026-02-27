@@ -12,7 +12,8 @@ decoding.codec = "json"
 type = "remap"
 inputs = ["rust_sdk", "pino_logs"]
 source = '''
-  .timestamp = .timestamp || .time || now()
+  .timestamp = .timestamp ||
+  .time || now()
   if exists(.section) {
     .source_type = "tsdk"
   } else {
