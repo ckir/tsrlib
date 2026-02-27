@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "build": "napi build --platform -p rsdk-ffi --release --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts && copy packages\\rsdk\\crates\\ffi-adapter\\*.node packages\\tsdk\\src\\",
-    "build:debug": "napi build --platform -p rsdk-ffi --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts && copy packages\\rsdk\\crates\\ffi-adapter\\*.node packages\\tsdk\\src\\",
+    "build": "napi build --esm --platform -p rsdk-ffi --release --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts && copy packages\\rsdk\\crates\\ffi-adapter\\*.node packages\\tsdk\\src\\",
+    "build:debug": "napi build --esm --platform -p rsdk-ffi --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts && copy packages\\rsdk\\crates\\ffi-adapter\\*.node packages\\tsdk\\src\\",
     "artifacts": "napi artifacts --dist packages/tsdk/npm",
     "test": "vitest run",
     "format": "prettier --write .",
@@ -13,11 +13,13 @@
   },
   "devDependencies": {
     "@napi-rs/cli": "^3.0.0-alpha.63",
-    "typescript": "^5.4.0",
-    "vitest": "^4.0.18",
-    "prettier": "^3.2.0",
+    "@types/bun": "^1.3.9",
+    "@types/node": "^25.3.2",
     "eslint": "^10.0.2",
-    "tsx": "^4.21.0"
+    "prettier": "^3.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.4.0",
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": ">= 18"
