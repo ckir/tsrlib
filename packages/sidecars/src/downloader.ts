@@ -32,8 +32,8 @@ export function getSidecarUrls() {
     const platform = process.platform;
 
     // Mapping for Vector (example versions)
-    const vectorVersion = '0.40.0';
-    const caddyVersion = '2.7.6';
+    const vectorVersion = '0.53.0';
+    const caddyVersion = '2.11.1';
 
     let vectorUrl = '';
     let caddyUrl = '';

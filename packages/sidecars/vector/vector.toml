@@ -1,0 +1,27 @@
+[sources.rust_sdk]
+type = "stdin"
+decoding.codec = "json"
+
+[sources.pino_logs]
+type = "socket"
+address = "127.0.0.1:9000"
+mode = "tcp"
+decoding.codec = "json"
+
+[transforms.unified_logs]
+type = "remap"
+inputs = ["rust_sdk", "pino_logs"]
+source = '''
+  .timestamp = .timestamp || .time || now()
+  if exists(.section) {
+    .source_type = "tsdk"
+  } else {
+    .source_type = "rsdk"
+  }
+  del(.time)
+'''
+
+[sinks.console]
+type = "console"
+inputs = ["unified_logs"]
+encoding.codec = "json"

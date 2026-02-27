@@ -7,31 +7,35 @@ export class SidecarManager {
 
   private getBinPath(name: string): string {
     const ext = process.platform === 'win32' ? '.exe' : '';
-    return path.join(process.cwd(), '.bin', `${name}${ext}`);
+    return path.resolve(process.cwd(), '.bin', `${name}${ext}`);
+  }
+
+  async startVector() {
+    const bin = this.getBinPath('vector');
+    const config = path.resolve(process.cwd(), 'packages/sidecars/vector/vector.toml');
+    if (!fs.existsSync(bin)) throw new Error(`Vector binary missing`);
+
+    console.log('📊 Starting Vector...');
+    // We remove shell: true and pass args as an array for security and stability
+    const proc = spawn(bin, ['--config', config], { stdio: 'inherit' });
+    this.processes.set('vector', proc);
   }
 
   async startCaddy() {
     const bin = this.getBinPath('caddy');
-    const config = path.join(process.cwd(), 'packages/sidecars/caddy/Caddyfile');
+    const config = path.resolve(process.cwd(), 'packages/sidecars/caddy/Caddyfile');
+    if (!fs.existsSync(bin)) throw new Error(`Caddy binary missing`);
 
-    if (!fs.existsSync(bin)) {
-        throw new Error("Caddy binary missing. Run 'Sync Sidecar Binaries' first.");
-    }
-
-    const proc = spawn(bin, ['run', '--config', config, '--adapter', 'caddyfile'], {
-      stdio: 'inherit',
-      shell: true
+    console.log('🚀 Starting Caddy...');
+    const proc = spawn(bin, ['run', '--config', config, '--adapter', 'caddyfile'], { 
+        stdio: 'inherit' 
     });
-
     this.processes.set('caddy', proc);
-    console.log('🚀 Caddy Reverse Proxy is running on http://localhost:8080');
   }
 
   stopAll() {
-    this.processes.forEach((p, name) => {
-      p.kill();
-      console.log(`[Sidecar] Stopped ${name}`);
-    });
+    console.log('🛑 Shutting down sidecars...');
+    this.processes.forEach((p) => p.kill());
     this.processes.clear();
   }
 }
