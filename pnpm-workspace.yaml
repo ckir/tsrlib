@@ -1,0 +1,7 @@
+packages:
+  - packages/tsdk
+  - packages/tsdk/packages/*
+  - packages/sidecars
+
+onlyBuiltDependencies:
+  - esbuild

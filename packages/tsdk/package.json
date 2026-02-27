@@ -1,0 +1,16 @@
+{
+  "name": "@tsrlib/tsdk",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "dependencies": {
+    "@tsrlib/core": "workspace:*",
+    "@tsrlib/configs": "workspace:*",
+    "@tsrlib/connections": "workspace:*",
+    "@tsrlib/loggers": "workspace:*",
+    "@tsrlib/markets": "workspace:*",
+    "@tsrlib/retrieve": "workspace:*",
+    "@tsrlib/utils": "workspace:*"
+  }
+}

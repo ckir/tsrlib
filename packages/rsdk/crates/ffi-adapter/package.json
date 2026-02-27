@@ -1,0 +1,9 @@
+{
+  "name": "rsdk-ffi",
+  "version": "0.0.0",
+  "private": true,
+  "napi": {
+    "binaryName": "rsdk",
+    "packageName": "@tsrlib/rsdk"
+  }
+}

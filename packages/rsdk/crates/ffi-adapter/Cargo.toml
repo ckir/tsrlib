@@ -1,0 +1,16 @@
+[package]
+name = "rsdk-ffi"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "3.0.0-alpha.12", features = ["async"] }
+napi-derive = "3.0.0-alpha.11"
+rsdk-core = { path = "../core" }
+
+[build-dependencies]
+napi-build = "2.1.3"
