@@ -1,15 +1,23 @@
-{
-    admin off
-    persist_config off
-}
-
 :8080 {
-    reverse_proxy localhost:3000 {
-        header_up Host {host}
-        header_up X-Real-IP {remote_host}
+    # Serve TypeScript Docs
+    handle_path /docs/ts/* {
+        root * docs/ts
+        file_server browse
+    }
+    
+    # Serve Rust Docs
+    handle_path /docs/rs/* {
+        root * docs/rs
+        file_server browse
     }
 
-    log {
-        output file .bin/caddy_access.log
+    # API Proxy (Only proxy /api requests to port 3000)
+    handle /api/* {
+        reverse_proxy localhost:3000
+    }
+
+    # Static Landing Page (Prevents 502 on root)
+    handle / {
+        respond "TSRLIB Gateway is Online. Visit /docs/ts or start your app on :3000 for /api"
     }
 }
