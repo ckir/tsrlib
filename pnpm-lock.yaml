@@ -99,7 +99,11 @@ importers:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.3.2)(msw@2.12.10(@types/node@25.3.2)(typescript@5.9.3))(tsx@4.21.0)(yaml@2.8.2)
 
-  packages/tsdk/packages/markets: {}
+  packages/tsdk/packages/markets:
+    dependencies:
+      serialize-error:
+        specifier: ^13.0.1
+        version: 13.0.1
 
   packages/tsdk/packages/retrieve:
     dependencies:

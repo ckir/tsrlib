@@ -4,5 +4,7 @@
   "private": true,
   "type": "module",
   "main": "./src/index.ts",
-  "dependencies": {}
+  "dependencies": {
+    "serialize-error": "^13.0.1"
+  }
 }
