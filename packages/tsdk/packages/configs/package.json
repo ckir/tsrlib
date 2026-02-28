@@ -4,5 +4,13 @@
   "private": true,
   "type": "module",
   "main": "./src/index.ts",
-  "dependencies": {}
+  "dependencies": {
+    "confbox": "^0.2.4",
+    "deepmerge-ts": "^7.1.5",
+    "serialize-error": "^13.0.1",
+    "yargs": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/yargs": "^17.0.35"
+  }
 }

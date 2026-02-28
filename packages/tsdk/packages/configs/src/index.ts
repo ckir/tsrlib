@@ -1,1 +1,3 @@
-export const ConfigsSection = { status: 'active' };
+// packages/tsdk/packages/configs/src/index.ts
+export * from './ConfigManager.js';
+export * from './ConfigUtils.js';
