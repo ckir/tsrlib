@@ -57,7 +57,7 @@ const lifecycle = {
 
     async checkPrerequisites() {
         console.log('\n--- 🔍 Checking Prerequisites ---');
-        ['node -v', 'pnpm -v', 'cargo -v', 'bun -v'].forEach(cmd => {
+        ['node -v', 'pnpm -v', 'cargo --version', 'bun -v'].forEach(cmd => {
             const ok = run(cmd);
             console.log(ok ? `✅ ${cmd.split(' ')[0]} detected.` : `❌ ${cmd.split(' ')[0]} NOT found.`);
         });
