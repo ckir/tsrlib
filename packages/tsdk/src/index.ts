@@ -1,8 +1,10 @@
 /**
  * TSRLIB TypeScript SDK - Main Entry Point
+ * Wraps the Rust Native Bridge and TS Logic Modules
  */
 import * as rsdk from './rsdk-loader.js';
 
+// The Primary SDK Controller
 export const RSdk = {
     /** Initialize OpenTelemetry tracing via Rust */
     initTracing: rsdk.initTracing,
@@ -17,7 +19,7 @@ export const RSdk = {
     heavyCompute: rsdk.heavyCompute
 };
 
-// Export individual sections
+// Export individual Logic Sections (Pnpm Workspace Packages)
 export * from '@tsrlib/loggers';
 export * from '@tsrlib/configs';
 export * from '@tsrlib/connections';
