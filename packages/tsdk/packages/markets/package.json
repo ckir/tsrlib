@@ -5,6 +5,10 @@
   "type": "module",
   "main": "./src/index.ts",
   "dependencies": {
+    "luxon": "^3.7.2",
     "serialize-error": "^13.0.1"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.7.1"
   }
 }
