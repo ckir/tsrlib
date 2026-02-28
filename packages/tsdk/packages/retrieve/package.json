@@ -4,5 +4,12 @@
   "private": true,
   "type": "module",
   "main": "./src/index.ts",
-  "dependencies": {}
+  "dependencies": {
+    "ky": "^1.14.3",
+    "serialize-error": "^13.0.1",
+    "ts-deepmerge": "^7.0.3"
+  },
+  "devDependencies": {
+    "msw": "^2.12.10"
+  }
 }

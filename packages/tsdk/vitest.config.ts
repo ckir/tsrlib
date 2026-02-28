@@ -12,6 +12,20 @@ export default defineConfig({
     // Environment for FFI and Socket testing
     environment: 'node',
 
+    /**
+     * Vitest 4 Migration: poolOptions.threads/forks are now top-level.
+     * We pass --no-webstorage to Node to suppress the "--localstorage-file" 
+     * warning triggered by Node 25+'s native Web Storage API.
+     */
+    pool: 'forks', // Explicitly setting the pool type for consistency
+    forks: {
+      execArgv: ['--no-webstorage'],
+    },
+    // If you use threads instead of forks, use this:
+    // threads: {
+    //   execArgv: ['--no-webstorage'],
+    // },
+
     // Start Vector/Caddy before tests and stop them after
     globalSetup: [path.resolve(__dirname, './test/global-setup.ts')],
 
