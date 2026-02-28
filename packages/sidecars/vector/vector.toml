@@ -1,5 +1,9 @@
+# packages/sidecars/vector/vector.toml
+
 [sources.rust_sdk]
-type = "stdin"
+type = "socket"
+address = "127.0.0.1:9001"
+mode = "tcp"
 decoding.codec = "json"
 
 [sources.pino_logs]
@@ -12,8 +16,7 @@ decoding.codec = "json"
 type = "remap"
 inputs = ["rust_sdk", "pino_logs"]
 source = '''
-  .timestamp = .timestamp ||
-  .time || now()
+  .timestamp = .timestamp || .time || now()
   if exists(.section) {
     .source_type = "tsdk"
   } else {

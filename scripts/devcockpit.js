@@ -1,99 +1,113 @@
+/**
+ * TSRLIB Developers Cockpit
+ */
 import { execSync } from 'child_process';
 import readline from 'readline';
 import fs from 'fs';
 import path from 'path';
-import http from 'http';
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
-const run = (cmd, silent = false) => {
+const run = (cmd, cwd = process.cwd()) => {
     try {
-        execSync(cmd, { stdio: silent ? 'pipe' : 'inherit' });
+        execSync(cmd, { stdio: 'inherit', cwd });
         return true;
-    } catch (e) { return false; }
+    } catch (e) {
+        return false;
+    }
 };
 
 const lifecycle = {
+    async buildAll() {
+        console.log('\n--- 🏗️ Building Rust Bridge (NAPI-RS) ---');
+        const ffiPath = path.resolve(process.cwd(), 'packages/rsdk/crates/ffi-adapter');
+        const tsdkSrcPath = path.resolve(process.cwd(), 'packages/tsdk/src');
+        
+        // 1. Run the build (Release mode for stability)
+        const success = run('npx napi build --platform --release --output-dir ../../../tsdk/src', ffiPath);
+        
+        if (success) {
+            const files = fs.readdirSync(tsdkSrcPath);
+            
+            // 2. Align binary naming
+            const nodeFile = files.find(f => f.endsWith('.node') && f !== 'rsdk.node');
+            if (nodeFile) {
+                console.log(`🔄 Aligning binary: ${nodeFile} -> rsdk.node`);
+                fs.renameSync(path.join(tsdkSrcPath, nodeFile), path.join(tsdkSrcPath, 'rsdk.node'));
+            }
+
+            // 3. CLEANUP: Delete auto-generated JS/DTS files that cause "Cannot find native binding" errors
+            const staleFiles = ['index.js', 'index.d.ts', 'rsdk.js', 'rsdk.d.ts'];
+            staleFiles.forEach(f => {
+                const p = path.join(tsdkSrcPath, f);
+                if (fs.existsSync(p)) {
+                    console.log(`🧹 Removing stale file: ${f}`);
+                    fs.unlinkSync(p);
+                }
+            });
+
+            console.log(`✅ Build Complete. Ready for Health Check.`);
+        }
+    },
+
+    async runTests() {
+        console.log('\n--- 🧪 Running Vitest Integration Tests ---');
+        run('pnpm vitest run --config packages/tsdk/vitest.config.ts');
+    },
+
     async checkPrerequisites() {
         console.log('\n--- 🔍 Checking Prerequisites ---');
-        const deps = [
-            { name: 'Node.js', cmd: 'node -v' },
-            { name: 'PNPM', cmd: 'pnpm -v' },
-            { name: 'Rust/Cargo', cmd: 'cargo -v' },
-            { name: 'Bun', cmd: 'bun -v' }
-        ];
-
-        let allClear = true;
-        deps.forEach(dep => {
-            if (run(dep.cmd, true)) {
-                console.log(`✅ ${dep.name} detected.`);
-            } else {
-                console.log(`❌ ${dep.name} NOT found.`);
-                allClear = false;
-            }
+        ['node -v', 'pnpm -v', 'cargo -v', 'bun -v'].forEach(cmd => {
+            const ok = run(cmd);
+            console.log(ok ? `✅ ${cmd.split(' ')[0]} detected.` : `❌ ${cmd.split(' ')[0]} NOT found.`);
         });
-
-        const binPath = path.resolve(process.cwd(), '.bin');
-        if (!fs.existsSync(binPath) || fs.readdirSync(binPath).length < 2) {
-            console.log('⚠️ Sidecar binaries (Vector/Caddy) missing in .bin/.');
-            allClear = false;
-        }
-
-        return allClear;
+        return true;
     },
 
     async cleanProject() {
         console.log('\n--- 🧹 Cleaning Project ---');
         const targets = ['node_modules', 'dist', 'target', 'packages/tsdk/src/rsdk.node'];
         targets.forEach(t => {
-            if (fs.existsSync(t)) {
-                console.log(`Removing ${t}...`);
-                fs.rmSync(t, { recursive: true, force: true });
-            }
+            if (fs.existsSync(t)) fs.rmSync(t, { recursive: true, force: true });
         });
-        console.log('✅ Cleanup complete. Run Option 1 to reinstall.');
+        run('pnpm install');
     },
 
-    async buildAll() {
-        console.log('\n--- 🏗️ Building SDKs ---');
-        // Execute build from root to ensure paths like 'packages/tsdk/src' resolve correctly 
-        const buildSuccess = run('pnpm build:debug');
+    async generateDocs() {
+        console.log('\n--- 📚 Generating API Documentation ---');
+        run('pnpm typedoc');
+    },
 
-        if (buildSuccess) {
-            console.log('✅ Native bindings generated.');
-            // The rename/move logic you already have handles the rest 
-        } else {
-            console.error('❌ Build failed. Check if NAPI-RS can access the tsdk/src directory.');
-        }
+    async runHealthCheck() {
+        console.log('\n--- 🩺 Running SDK Health Check ---');
+        run('bun packages/tsdk/src/verify_logs.ts');
     }
 };
 
 const showMenu = () => {
     console.log(`
---- TSRLIB DevelopersCockpit ---
-1. Build RS/TS SDKs (Reinstall + Build)
-2. Run Tests
-3. START Vector & Caddy (Foreground)
+--- TSRLIB Developers Cockpit ---
+1. Build RS/TS SDKs (NAPI + TSDK)
+2. Run Tests (Vitest)
+3. START Sidecars (Vector & Caddy)
 4. SYNC Binaries (Download Sidecars)
 5. Check Prerequisites & Health
-6. CLEAN Project (Delete build artifacts)
-7. Exit`);
+6. CLEAN & REINSTALL (Fresh Start)
+7. Generate Documentation (TypeDoc)
+8. Run Health Check Pulse (verify_logs)
+0. Exit`);
 
     rl.question('\nSelect Action: ', async (choice) => {
         if (choice === '1') await lifecycle.buildAll();
-        else if (choice === '2') {
-            console.log('\n--- 🧪 Running Integration Tests ---');
-            // Force Vitest to use the TSDK config which has the globalSetup for sidecars
-            run('pnpm vitest run --config packages/tsdk/vitest.config.ts');
-        }
-        else if (choice === '3') run('pnpm tsx scripts/start-sidecars.ts');
-        else if (choice === '4') run('pnpm tsx packages/sidecars/src/sync-binaries.ts');
-        else if (choice === '5') {
-            const ok = await lifecycle.checkPrerequisites();
-            if (ok) console.log('🚀 System is ready for development.');
-        }
+        else if (choice === '2') await lifecycle.runTests();
+        else if (choice === '3') run('bun scripts/start-sidecars.ts');
+        else if (choice === '4') run('bun packages/sidecars/src/sync-binaries.ts');
+        else if (choice === '5') await lifecycle.checkPrerequisites();
         else if (choice === '6') await lifecycle.cleanProject();
-        else if (choice === '7') process.exit(0);
+        else if (choice === '7') await lifecycle.generateDocs();
+        else if (choice === '8') await lifecycle.runHealthCheck();
+        else if (choice === '0') process.exit(0);
+        else console.log('Invalid option');
 
         setTimeout(showMenu, 500);
     });

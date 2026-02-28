@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@tsrlib/*": ["packages/tsdk/packages/*/src/index.ts"]
+    }
+  },
+  "include": ["packages/**/*.ts"],
+  "exclude": ["node_modules", "dist", "target"]
+}

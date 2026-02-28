@@ -1,4 +1,4 @@
-import { SidecarManager } from "../packages/sidecars/src/index.ts";
+import { SidecarManager } from "../packages/sidecars/src/index";
 
 const sm = new SidecarManager();
 
@@ -9,7 +9,8 @@ async function boot() {
         console.log('\n✅ Sidecars are active.');
         console.log('Press CTRL+C to stop services...\n');
     } catch (e) {
-        console.error('❌ Failed to start sidecars:', e.message);
+        const message = e instanceof Error ? e.message : String(e);
+        console.error('❌ Failed to start sidecars:', message);
         process.exit(1);
     }
 }
@@ -22,4 +23,4 @@ process.on("SIGINT", () => {
 boot();
 
 // Keep the process alive
-setInterval(() => {}, 1000);
+setInterval(() => { }, 1000);

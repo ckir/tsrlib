@@ -4,13 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "napi build --platform --esm -p rsdk-ffi --release --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts && shx mv packages/rsdk/crates/ffi-adapter/*.node packages/tsdk/src/rsdk.node",
-    "build:debug": "napi build --platform --esm -p rsdk-ffi --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts && shx mv packages/rsdk/crates/ffi-adapter/*.node packages/tsdk/src/rsdk.node",
+    "build": "napi build --platform --esm -p rsdk-ffi --release --output-name rsdk --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts && shx mv packages/rsdk/crates/ffi-adapter/rsdk.*.node packages/tsdk/src/rsdk.node",
+    "build:debug": "napi build --platform --esm -p rsdk-ffi --output-name rsdk --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts && shx mv packages/rsdk/crates/ffi-adapter/rsdk.*.node packages/tsdk/src/rsdk.node",
     "artifacts": "napi artifacts --dist packages/tsdk/npm",
     "test": "vitest run --config packages/tsdk/vitest.config.ts",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "cockpit": "bun scripts/devcockpit.js"
+    "cockpit": "bun scripts/devcockpit.js",
+    "docs:ts": "typedoc"
   },
   "devDependencies": {
     "@napi-rs/cli": "^3.0.0-alpha.63",
@@ -20,6 +21,7 @@
     "prettier": "^3.2.0",
     "shx": "^0.4.0",
     "tsx": "^4.21.0",
+    "typedoc": "^0.28.17",
     "typescript": "^5.4.0",
     "vitest": "^4.0.18"
   },

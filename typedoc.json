@@ -1,0 +1,18 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "packages/tsdk/src/index.ts",
+    "packages/tsdk/packages/*/src/index.ts"
+  ],
+  "out": "docs/ts",
+  "tsconfig": "tsconfig.json",
+  "name": "TSRLIB API Documentation",
+  "includeVersion": true,
+  "excludeInternal": true,
+  "skipErrorChecking": true,
+  "validation": {
+    "notExported": false
+  },
+  "githubPages": false,
+  "plugin": []
+}

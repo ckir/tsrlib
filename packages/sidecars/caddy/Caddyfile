@@ -1,23 +1,51 @@
+# TSRLIB Gateway Configuration
+# Serves Documentation and Proxies API requests
+
 :8080 {
-    # Serve TypeScript Docs
-    handle_path /docs/ts/* {
-        root * docs/ts
-        file_server browse
-    }
-    
-    # Serve Rust Docs
-    handle_path /docs/rs/* {
-        root * docs/rs
-        file_server browse
+    encode zstd gzip
+
+    # 1. Handle TypeScript Docs
+    # We match /docs/ts (no slash) and /docs/ts/ (with slash)
+    handle /docs/ts* {
+        # If the user forgot the trailing slash, redirect them so relative paths work
+        @no_slash {
+            path /docs/ts
+        }
+        redir @no_slash /docs/ts/
+
+        # Strip the prefix and serve from the docs/ts folder
+        handle_path /docs/ts/* {
+            root * docs/ts
+            file_server browse
+        }
     }
 
-    # API Proxy (Only proxy /api requests to port 3000)
+    # 2. Handle Rust Docs
+    handle /docs/rs* {
+        @no_slash_rs {
+            path /docs/rs
+        }
+        redir @no_slash_rs /docs/rs/
+
+        handle_path /docs/rs/* {
+            root * docs/rs
+            file_server browse
+        }
+    }
+
+    # 3. API Reverse Proxy
     handle /api/* {
         reverse_proxy localhost:3000
     }
 
-    # Static Landing Page (Prevents 502 on root)
+    # 4. Dashboard Landing Page
     handle / {
-        respond "TSRLIB Gateway is Online. Visit /docs/ts or start your app on :3000 for /api"
+        header Content-Type "text/html; charset=utf-8"
+        respond "<html><body style='font-family:sans-serif;padding:2rem;line-height:1.6;background:#f4f4f9;'><h1>🚀 TSRLIB Gateway Online</h1><hr/><ul><li><a href='/docs/ts/'>TypeScript SDK Docs</a></li><li><a href='/docs/rs/'>Rust SDK Docs</a></li></ul></body></html>"
+    }
+
+    log {
+        output stdout
+        format console
     }
 }

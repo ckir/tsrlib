@@ -1,6 +1,9 @@
-import { defineWorkspace } from 'vitest/config';
+import { defineProject } from 'vitest/config'
 
-export default defineWorkspace([
-  'packages/tsdk',           // Added to cover main tsdk/src
-  'packages/tsdk/packages/*' // Existing sub-packages 
-]);
+export default defineProject({
+  test: {
+    name: 'tsdk-loggers',
+    environment: 'node',
+  }
+}
+);
