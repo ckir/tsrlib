@@ -1,0 +1,15 @@
+{
+  "name": "@tsrlib/database",
+  "version": "0.0.1",
+  "description": "Unified database interface for tsrlib supporting SQLite and Postgres",
+  "type": "module",
+  "main": "./src/index.ts",
+  "peerDependencies": {
+    "@libsql/client": "^0.17.0",
+    "pg": "^8.11.0"
+  },
+  "peerDependenciesMeta": {
+    "@libsql/client": { "optional": true },
+    "pg": { "optional": true }
+  }
+}

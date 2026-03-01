@@ -1,3 +1,6 @@
+/**
+ * packages/tsdk/packages/markets/src/Nasdaq/MarketStatus.ts
+ */
 import { DateTime, Duration } from 'luxon';
 import { ApiNasdaqUnlimited, NasdaqResult } from './ApiNasdaqUnlimited.js';
 import { serializeError } from 'serialize-error';
@@ -31,9 +34,6 @@ export class MarketStatus {
     private static readonly ZONE = 'America/New_York';
 
     /**
-     * Fetches the current market status and returns the raw data.
-     */
-    /**
      * Fetches the current market status.
      * Guaranteed to return a NasdaqResult without "falling through" to undefined.
      */
@@ -51,7 +51,8 @@ export class MarketStatus {
                     message: errorData.message || 'Nasdaq API returned an error status'
                 };
 
-                logger?.error({ msg: '[MarketStatus] Fetch Failed', reason: reasonSerialized });
+                // Use robust optional chaining to protect against incomplete loggers in tests
+                logger?.error?.({ msg: '[MarketStatus] Fetch Failed', reason: reasonSerialized });
                 return { status: 'error', reason: reasonSerialized };
             }
 
@@ -62,7 +63,7 @@ export class MarketStatus {
                 const msg = 'STRICT SCHEMA VALIDATION FAILED: Missing required fields';
                 const payload = serializeError(data);
 
-                logger?.fatal({ msg, payload });
+                logger?.fatal?.({ msg, payload });
                 return {
                     status: 'error',
                     reason: { message: msg, payload }
@@ -70,7 +71,7 @@ export class MarketStatus {
             }
 
             // Path 3: Success
-            logger?.debug({ msg: '[MarketStatus] Schema validated successfully' });
+            logger?.debug?.({ msg: '[MarketStatus] Schema validated successfully' });
             return {
                 status: 'success',
                 value: data,
@@ -85,15 +86,12 @@ export class MarketStatus {
                 message: errorData.message || 'Unexpected MarketStatus Exception'
             };
 
-            logger?.error({ msg: '[MarketStatus] Unexpected Error', error: serializedReason });
+            logger?.error?.({ msg: '[MarketStatus] Unexpected Error', error: serializedReason });
             return {
                 status: 'error',
                 reason: serializedReason
             };
         }
-
-        // Note: No "return" needed here because every path in try/catch 
-        // above explicitly returns or throws.
     }
 
     /**
@@ -114,11 +112,9 @@ export class MarketStatus {
         const marketOpen = DateTime.fromISO(data.openRaw, { zone: this.ZONE });
 
         // 4. Determine Target
-        // Rust: let mut target = if now < self.pm_open_raw { self.pm_open_raw } else { self.open_raw };
         let target = (now < pmOpen) ? pmOpen : marketOpen;
 
         // 5. Handle Weekends/Holidays (If target is in the past)
-        // Rust: if target <= now { ... parse next_trade_date ... set to 04:00 AM ... }
         if (target <= now) {
             // Format: "MMM d, yyyy" -> e.g., "Mar 2, 2026"
             const nextTrade = DateTime.fromFormat(data.nextTradeDate, 'MMM d, yyyy', { zone: this.ZONE });
@@ -127,7 +123,7 @@ export class MarketStatus {
                 // Set to 04:00:00 NY time
                 target = nextTrade.set({ hour: 4, minute: 0, second: 0, millisecond: 0 });
             } else {
-                (globalThis as any).logger?.warn({
+                (globalThis as any).logger?.warn?.({
                     msg: '[MarketStatus] Failed to parse nextTradeDate',
                     date: data.nextTradeDate
                 });
@@ -138,10 +134,7 @@ export class MarketStatus {
         // 6. Calculate Diff
         if (target > now) {
             const diff = target.diff(now); // Returns duration
-
             console.log(`Target NY Open: ${target.toFormat('yyyy-MM-dd HH:mm:ss')} (${diff.toFormat('hh:mm:ss')} remaining)`);
-
-            // Return the difference, ensuring at least a minimal fallback buffer
             return diff.valueOf() > 0 ? diff : Duration.fromObject({ seconds: 60 });
         }
 

@@ -6,6 +6,7 @@
   "main": "./src/index.ts",
   "dependencies": {
     "luxon": "^3.7.2",
+    "protobufjs": "^8.0.0",
     "serialize-error": "^13.0.1"
   },
   "devDependencies": {
