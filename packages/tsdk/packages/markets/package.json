@@ -7,9 +7,11 @@
   "dependencies": {
     "luxon": "^3.7.2",
     "protobufjs": "^8.0.0",
-    "serialize-error": "^13.0.1"
+    "serialize-error": "^13.0.1",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
-    "@types/luxon": "^3.7.1"
+    "@types/luxon": "^3.7.1",
+    "@types/ws": "^8.18.1"
   }
 }
