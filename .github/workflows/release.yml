@@ -17,13 +17,35 @@ jobs:
       fail-fast: false
       matrix:
         settings:
+          # --- Linux ---
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-            build: pnpm run build:ffi
+            artifact_name: rsdk-linux-x86_64.node
+          - host: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            artifact_name: rsdk-linux-arm64.node
+            # Cross-compilation linker required for Linux ARM64
+            setup: |
+              sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
+              echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+              echo "CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+              echo "CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++" >> $GITHUB_ENV
+
+          # --- macOS ---
+          - host: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: rsdk-darwin-x86_64.node
+          - host: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: rsdk-darwin-arm64.node
+
+          # --- Windows ---
           - host: windows-latest
             target: x86_64-pc-windows-msvc
-            build: pnpm run build:ffi
+            artifact_name: rsdk-windows-x86_64.node
+          - host: windows-latest
+            target: aarch64-pc-windows-msvc
+            artifact_name: rsdk-windows-arm64.node
 
     name: build - ${{ matrix.settings.target }}
     runs-on: ${{ matrix.settings.host }}
@@ -31,23 +53,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install pnpm
-        if: ${{ success() }}
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.30.3
-          run_install: true
-
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.30.3
+          run_install: false # Disabled so we can manually run it with env vars
 
       - name: Debug node and pnpm versions
         run: |
           node --version
           npm --version
           pnpm --version
+
+      - name: Install Dependencies
+        run: pnpm install
+        env:
+          # Bypasses sync-binaries.ts 404 crash during CI setup
+          TSR_DEV: "true"
+
+      - name: Setup Linux Cross-Compilation
+        if: ${{ matrix.settings.setup }}
+        run: ${{ matrix.settings.setup }}
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -56,37 +87,18 @@ jobs:
           targets: ${{ matrix.settings.target }}
 
       - name: Build
-        run: ${{ matrix.settings.build }}
+        run: pnpm run build:ffi
         env:
           TARGET: ${{ matrix.settings.target }}
 
-      - name: Rename artifact on Linux / macOS
-        if: ${{ matrix.settings.host == 'ubuntu-latest' || matrix.settings.host == 'macos-latest' }}
-        shell: bash
-        run: |
-          # Map Rust targets to your sync-binaries naming convention
-          if [[ "${{ matrix.settings.target }}" == *"windows"* ]]; then
-            mv packages/tsdk/src/rsdk.node rsdk-windows-x86_64.node
-          else
-            mv packages/tsdk/src/rsdk.node rsdk-linux-x86_64.node
-          fi
+      - name: Rename artifact (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: mv packages/tsdk/src/rsdk.node ${{ matrix.settings.artifact_name }}
 
-      - name: Rename artifact on Windows
-        if: ${{ matrix.settings.host == 'windows-latest' }}
+      - name: Rename artifact (Windows)
+        if: runner.os == 'Windows'
         shell: pwsh
-        run: |
-          $src = 'packages/tsdk/src/rsdk.node'
-          if ($env:TARGET -like '*windows*') {
-            $dest = 'rsdk-windows-x86_64.node'
-          } else {
-            $dest = 'rsdk-linux-x86_64.node'
-          }
-          if (Test-Path $src) {
-            Move-Item -Path $src -Destination $dest -Force
-          } else {
-            Write-Host "Warning: $src not found"
-            exit 1
-          }
+        run: Move-Item -Path packages/tsdk/src/rsdk.node -Destination ${{ matrix.settings.artifact_name }} -Force
 
       - name: List workspace for debugging
         run: ls -la
@@ -95,7 +107,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rsdk-${{ matrix.settings.target }}
-          path: rsdk-*.node
+          path: ${{ matrix.settings.artifact_name }}
 
   release:
     name: Create GitHub Release
