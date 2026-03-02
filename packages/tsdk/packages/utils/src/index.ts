@@ -1,5 +1,5 @@
 /**
- * packages/tsdk/packages/utils/src/index.ts
+ * @file packages/tsdk/packages/utils/src/index.ts
  */
 
 /**
@@ -48,3 +48,12 @@ export class RequestResponseSerialize {
  */
 export const wrapResult = RequestResponseSerialize.wrapResult;
 export const wrapError = RequestResponseSerialize.wrapError;
+
+/**
+ * Exported UtilsSection for the unified RSdk interface.
+ */
+export const UtilsSection = {
+    wrapResult,
+    wrapError,
+    RequestResponseSerialize
+};

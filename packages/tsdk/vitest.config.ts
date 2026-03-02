@@ -38,20 +38,19 @@ export default defineConfig({
 
     // Include tests from all sub-packages
     include: [
-      'packages/*/test/**/*.{test,spec}.ts',       // Matches packages/tsdk/test
-      'packages/tsdk/packages/*/test/**/*.{test,spec}.ts', // Matches packages/tsdk/packages/loggers/test
-      'test/**/*.{test,spec}.ts'                   // Matches root test folder
+      'packages/*/test/**/*.{test,spec}.ts',       
+      'packages/tsdk/packages/*/test/**/*.{test,spec}.ts', 
+      'test/**/*.{test,spec}.ts'                 
     ],
 
     // Increase timeout for the first run in case Rust/Sidecars take a moment to warm up
     testTimeout: 10000,
 
     /**
-     * Vitest Migration: poolOptions belong inside the test object.
-     * We pass --no-webstorage to Node to suppress the "--localstorage-file" 
-     * warning triggered by Node 25+'s native Web Storage API.
+     * Restored to your original valid Vitest configuration structure.
+     * Added '--no-experimental-webstorage' to suppress the Node 22+ localstorage warning.
      */
-    execArgv: ['--expose-gc'],
+    execArgv: ['--expose-gc', '--no-experimental-webstorage'],
     isolate: false,
     maxWorkers: 1,
     vmMemoryLimit: '300Mb',

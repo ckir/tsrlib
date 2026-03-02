@@ -1,0 +1,87 @@
+name: Release Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+            build: pnpm run build:ffi
+          - host: windows-latest
+            target: x86_64-pc-windows-msvc
+            build: pnpm run build:ffi
+
+    name: build - ${{ matrix.settings.target }}
+    runs-on: ${{ matrix.settings.host }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+          run_install: true
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: ${{ matrix.settings.target }}
+
+      - name: Build
+        run: ${{ matrix.settings.build }}
+        env:
+          # Ensures NAPI-RS uses the correct target for cross-compilation
+          TARGET: ${{ matrix.settings.target }}
+
+      - name: Rename artifacts for sync-binaries
+        shell: bash
+        run: |
+          # Map Rust targets to your sync-binaries naming convention
+          if [[ "${{ matrix.settings.target }}" == *"windows"* ]]; then
+            mv packages/tsdk/src/rsdk.node rsdk-windows-x86_64.node
+          else
+            mv packages/tsdk/src/rsdk.node rsdk-linux-x86_64.node
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rsdk-${{ matrix.settings.target }}
+          path: rsdk-*.node
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/rsdk-*.node
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
