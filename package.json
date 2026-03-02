@@ -23,8 +23,8 @@
   ],
   "scripts": {
     "/* --- Maintainer: Rust FFI & Build --- */": "",
-    "build:ffi": "napi build --platform --esm -p rsdk-ffi --release --js packages/tsdk/src/rsdk.js --dts packages/tsdk/src/rsdk.d.ts",
-    "build:ffi:debug": "napi build --platform --esm -p rsdk-ffi --js packages/tsdk/src/rsdk.js --dts packages/tsdk/src/rsdk.d.ts",
+    "build:ffi": "napi build --platform --esm -p rsdk-ffi --release --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts",
+    "build:ffi:debug": "napi build --platform --esm -p rsdk-ffi --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts",
     "artifacts": "napi artifacts --dist packages/tsdk/npm",
     "/* --- Maintainer: Dev Tools --- */": "",
     "cockpit": "bun scripts/devcockpit.js || tsx scripts/devcockpit.js",
@@ -54,7 +54,7 @@
     "tsx": "^4.21.0",
     "tsup": "^8.0.2",
     "typedoc": "^0.28.17",
-    "typescript": "^5.4.0",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
   "engines": {
