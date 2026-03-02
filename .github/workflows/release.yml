@@ -37,7 +37,6 @@ jobs:
         with:
           version: 10.30.3
           run_install: true
-          cache: true
 
       - name: Setup node
         uses: actions/setup-node@v4
