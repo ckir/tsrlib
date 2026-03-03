@@ -1,3 +1,16 @@
+/**
+ * @file packages/tsdk/test/global-setup.ts
+ * @description Vitest global setup/teardown for integration tests.
+ * 
+ * FIXED: Added cross-platform port cleanup for Linux + macOS (pkill).
+ * Previously only Windows had cleanup → flaky "address already in use" on Linux/macOS CI and local runs.
+ * 
+ * Full support now:
+ * - Windows: taskkill
+ * - Linux/macOS: pkill -f (safe with || true)
+ * - Bun/Node: identical (child_process works the same)
+ */
+
 import { spawn, execSync, ChildProcess } from 'child_process';
 import path from 'path';
 import fs from 'fs';
@@ -8,25 +21,26 @@ let caddyProc: ChildProcess | undefined;
 export async function setup() {
     console.log('\n🚀 Starting Sidecars for Integration Tests...');
 
-    // Determine OS-specific executable extension
+    // === CROSS-PLATFORM PORT CLEANUP (Windows + Linux + macOS) ===
     const isWindows = process.platform === 'win32';
-    const ext = isWindows ? '.exe' : '';
-
-    // Windows-specific port cleanup to prevent 'os error 10048'
     if (isWindows) {
         try {
-            // Kill any process using Vector (9000/9001) or Caddy (8080/2019) ports
-            execSync(`taskkill /F /IM vector${ext} /T`, { stdio: 'ignore' });
-            execSync(`taskkill /F /IM caddy${ext} /T`, { stdio: 'ignore' });
-        } catch (e) {
-            // Ignore errors if processes weren't running
-        }
+            execSync('taskkill /F /IM vector.exe /T', { stdio: 'ignore' });
+            execSync('taskkill /F /IM caddy.exe /T', { stdio: 'ignore' });
+        } catch (_) {}
+    } else {
+        // Linux + macOS (pkill is available on both)
+        try {
+            execSync('pkill -9 -f vector || true', { stdio: 'ignore' });
+            execSync('pkill -9 -f caddy || true', { stdio: 'ignore' });
+        } catch (_) {}
     }
 
     const binDir = path.resolve(process.cwd(), '.bin');
     const vectorConfig = path.resolve(process.cwd(), 'packages/sidecars/vector/vector.toml');
     const caddyConfig = path.resolve(process.cwd(), 'packages/sidecars/caddy/Caddyfile');
 
+    const ext = isWindows ? '.exe' : '';
     const vectorBin = path.join(binDir, `vector${ext}`);
     const caddyBin = path.join(binDir, `caddy${ext}`);
 
@@ -44,7 +58,7 @@ export async function setup() {
         console.warn(`⚠️ Caddy binary not found at ${caddyBin}. Proxy tests may fail.`);
     }
 
-    // Give them a moment to bind to ports
+    // Give them time to bind ports
     await new Promise(resolve => setTimeout(resolve, 2000));
     console.log('✅ Sidecars setup complete.');
 }
