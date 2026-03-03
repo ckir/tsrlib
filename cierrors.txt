@@ -1,0 +1,301 @@
+Run pnpm run test
+
+
+
+> tsrlib@1.0.0 test D:\a\tsrlib\tsrlib
+
+> vitest run --config packages/tsdk/vitest.config.ts
+
+
+
+
+
+ RUN  v4.0.18 D:/a/tsrlib/tsrlib
+
+
+
+
+
+🚀 Starting Sidecars for Integration Tests...
+
+No test files found, exiting with code 1
+
+
+
+include: packages/*/test/**/*.{test,spec}.ts, packages/tsdk/packages/*/test/**/*.{test,spec}.ts, test/**/*.{test,spec}.ts
+
+exclude:  **/node_modules/**, **/.git/**
+
+
+
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+
+Error: spawn UNKNOWN
+
+ ❯ ChildProcess.spawn node:internal/child_process:420:11
+
+ ❯ spawn node:child_process:762:9
+
+ ❯ Object.setup packages/tsdk/test/global-setup.ts:35:22
+
+     33|     // Safely spawn Vector
+
+     34|     if (fs.existsSync(vectorBin)) {
+
+     35|         vectorProc = spawn(vectorBin, ['--config', vectorConfig], { st…
+
+       |                      ^
+
+     36|     } else {
+
+     37|         console.warn(`⚠️ Vector binary not found at ${vectorBin}. Tele…
+
+ ❯ TestProject._initializeGlobalSetup node_modules/.pnpm/vitest@4.0.18_@types+node@2_63ab7284fa25b5c21839181256190b88/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:10030:50
+
+ ❯ Vitest.initializeGlobalSetup node_modules/.pnpm/vitest@4.0.18_@types+node@2_63ab7284fa25b5c21839181256190b88/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:12730:35
+
+ ❯ node_modules/.pnpm/vitest@4.0.18_@types+node@2_63ab7284fa25b5c21839181256190b88/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:12593:6
+
+ ❯ node_modules/.pnpm/vitest@4.0.18_@types+node@2_63ab7284fa25b5c21839181256190b88/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:12622:11
+
+ ❯ node_modules/.pnpm/vitest@4.0.18_@types+node@2_63ab7284fa25b5c21839181256190b88/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:12506:19
+
+ ❯ startVitest node_modules/.pnpm/vitest@4.0.18_@types+node@2_63ab7284fa25b5c21839181256190b88/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:13516:8
+
+ ❯ start node_modules/.pnpm/vitest@4.0.18_@types+node@2_63ab7284fa25b5c21839181256190b88/node_modules/vitest/dist/chunks/cac.DVeoLl0M.js:1360:15
+
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+Serialized Error: { errno: -4094, code: 'UNKNOWN', syscall: 'spawn' }
+
+
+
+
+
+
+
+
+
+🛑 Shutting down sidecars...
+
+ ELIFECYCLE  Test failed. See above for more details.
+
+Error: Process completed with exit code 1.
+
+
+
+Run pnpm run test
+
+
+
+> tsrlib@1.0.0 test /home/runner/work/tsrlib/tsrlib
+
+> vitest run --config packages/tsdk/vitest.config.ts
+
+
+
+
+
+ RUN  v4.0.18 /home/runner/work/tsrlib/tsrlib
+
+
+
+
+
+🚀 Starting Sidecars for Integration Tests...
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 1: ��kp�u: not found
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 1: lr��h�����: not found
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 1: �jL�����v�m��M��B: not found
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 1: �x$+[c��: not found
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 1: �=V�9��ݵ=���: not found
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 2: ��W���$��A{����!$�D�ML�Ǭ���۰K�: not found
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 3: ���/��:��e����x�6�: not found
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 2: W�E��-�2��z�Scc�Q6xgeq�e��u[w�r�ԀnJ�f���.�P�Y�]�
+
+6g6̲��w��wcddww7[�_�|-[r�#C�$cl֩���N�
+
+������({���M7;���9���ߠ��ss��KӋ���5vky��-���.�l�Okla�-ϼY�]���P�\��<��-�rݪ��-��y�ö!��	�O��?��8��v#8{�V�J�q�Gp9��X�q�ܽz��v���ծk7V
+
+�Tp�w�fm[c�2����5�b�聻Ks�w�z\0mh�v��7˞S�Ck���2���P}�^���"l���Q@g�?~mtj,L��N�����fu2: File name too long
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 2: cannot open hӬ�-����v�b: No such file
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 5: Syntax error: Unterminated quoted string
+
+/home/runner/work/tsrlib/tsrlib/.bin/caddy: 1: Syntax error: ")" unexpected
+
+/home/runner/work/tsrlib/tsrlib/.bin/vector: 2: ��uj
+
+�.6{�I~��Yfb�v���Gv�iV܊�
+
+o�Z�n: not found
+
+✅ Sidecars setup complete.
+
+/opt/hostedtoolcache/node/20.20.0/x64/bin/node: bad option: --no-experimental-webstorage
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+
+
+Vitest caught 1 unhandled error during the test run.
+
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+
+Error: [vitest-pool]: Worker forks emitted error.
+
+ ❯ EventEmitter.<anonymous> node_modules/.pnpm/vitest@4.0.18_@types+node@25.3.2_msw@2.12.10_@types+node@25.3.2_typescript@5.9.3__tsx@4.21.0_yaml@2.8.2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8043:22
+
+ ❯ EventEmitter.emit node:events:524:28
+
+ ❯ ChildProcess.emitUnexpectedExit node_modules/.pnpm/vitest@4.0.18_@types+node@25.3.2_msw@2.12.10_@types+node@25.3.2_typescript@5.9.3__tsx@4.21.0_yaml@2.8.2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7610:22
+
+ ❯ ChildProcess.emit node:events:524:28
+
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:293:12
+
+
+
+Caused by: Error: Worker exited unexpectedly
+
+ ❯ ChildProcess.emitUnexpectedExit node_modules/.pnpm/vitest@4.0.18_@types+node@25.3.2_msw@2.12.10_@types+node@25.3.2_typescript@5.9.3__tsx@4.21.0_yaml@2.8.2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7609:33
+
+ ❯ ChildProcess.emit node:events:524:28
+
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:293:12
+
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+
+
+
+ Test Files  no tests
+
+      Tests  no tests
+
+     Errors  1 error
+
+   Start at  06:39:48
+
+   Duration  2.05s (transform 0ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)
+
+
+
+
+
+🛑 Shutting down sidecars...
+
+ ELIFECYCLE  Test failed. See above for more details.
+
+Error: Process completed with exit code 1.
+
+
+
+Run pnpm run test
+
+
+
+> tsrlib@1.0.0 test /Users/runner/work/tsrlib/tsrlib
+
+> vitest run --config packages/tsdk/vitest.config.ts
+
+
+
+
+
+ RUN  v4.0.18 /Users/runner/work/tsrlib/tsrlib
+
+
+
+
+
+⚠️ Vector binary not found at /Users/runner/work/tsrlib/tsrlib/.bin/vector. Telemetry tests may fail or timeout.
+
+🚀 Starting Sidecars for Integration Tests...
+
+⚠️ Caddy binary not found at /Users/runner/work/tsrlib/tsrlib/.bin/caddy. Proxy tests may fail.
+
+✅ Sidecars setup complete.
+
+/Users/runner/hostedtoolcache/node/20.20.0/arm64/bin/node: bad option: --no-experimental-webstorage
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+
+
+Vitest caught 1 unhandled error during the test run.
+
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+
+Error: [vitest-pool]: Worker forks emitted error.
+
+ ❯ EventEmitter.<anonymous> node_modules/.pnpm/vitest@4.0.18_@types+node@25.3.2_msw@2.12.10_@types+node@25.3.2_typescript@5.9.3__tsx@4.21.0_yaml@2.8.2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:8043:22
+
+ ❯ EventEmitter.emit node:events:524:28
+
+ ❯ ChildProcess.emitUnexpectedExit node_modules/.pnpm/vitest@4.0.18_@types+node@25.3.2_msw@2.12.10_@types+node@25.3.2_typescript@5.9.3__tsx@4.21.0_yaml@2.8.2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7610:22
+
+ ❯ ChildProcess.emit node:events:524:28
+
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:293:12
+
+
+
+
+
+Caused by: Error: Worker exited unexpectedly
+
+ Test Files  no tests
+
+ ❯ ChildProcess.emitUnexpectedExit node_modules/.pnpm/vitest@4.0.18_@types+node@25.3.2_msw@2.12.10_@types+node@25.3.2_typescript@5.9.3__tsx@4.21.0_yaml@2.8.2/node_modules/vitest/dist/chunks/cli-api.B7PN_QUv.js:7609:33
+
+      Tests  no tests
+
+ ❯ ChildProcess.emit node:events:524:28
+
+     Errors  1 error
+
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:293:12
+
+   Start at  06:39:41
+
+
+
+   Duration  2.05s (transform 0ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+
+
+
+
+
+🛑 Shutting down sidecars...
+
+ ELIFECYCLE  Test failed. See above for more details.
+
+Error: Process completed with exit code 1.
