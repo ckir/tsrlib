@@ -40,7 +40,12 @@ jobs:
           TSR_DEV: "true"
 
       - name: Build Rust FFI Bridge
-        run: pnpm run build:ffi
+        # FIXED: Use the exact same command as DevelopersCockpit + release workflow
+        # This guarantees the .node file lands in packages/tsdk/src/ (where rsdk-loader.ts expects it)
+        # Prevents "invalid ELF header" on Linux and "Cannot find native binding" on other platforms.
+        run: |
+          cd packages/rsdk/crates/ffi-adapter
+          npx napi build --platform --release --output-dir ../../../tsdk/src
 
       - name: Align Native Binary
         shell: bash
@@ -54,6 +59,10 @@ jobs:
           if [ -n "$GENERATED_FILE" ]; then
             echo "Aligning binary: $GENERATED_FILE -> rsdk.node"
             mv "$GENERATED_FILE" rsdk.node
+          else
+            echo "⚠️ No generated .node file found after build!"
+            ls -la
+            exit 1
           fi
 
       - name: Sync Sidecars (Vector & Caddy)
