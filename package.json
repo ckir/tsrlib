@@ -1,9 +1,12 @@
 {
   "name": "tsrlib",
-  "private": false,
   "version": "1.0.0",
-  "type": "module",
   "description": "Unified TSRLIB SDK with automated binary distribution and sidecar management",
+  "private": false,
+  "type": "module",
+  "engines": {
+    "node": ">= 18"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,26 +25,29 @@
     "packages/sidecars/caddy/Caddyfile"
   ],
   "scripts": {
-    "/* --- Maintainer: Rust FFI & Build --- */": "",
+    "/* --- Build & Distribution --- */": "",
+    "prepare": "pnpm run build && pnpm run sync-binaries",
+    "build": "tsup packages/tsdk/src/index.ts scripts/cli.ts scripts/sync-binaries.ts --format esm --dts --clean --out-dir dist",
     "build:ffi": "napi build --platform --esm -p rsdk-ffi --release --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts",
     "build:ffi:debug": "napi build --platform --esm -p rsdk-ffi --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts",
     "artifacts": "napi artifacts --dist packages/tsdk/npm",
-    "/* --- Maintainer: Dev Tools --- */": "",
-    "cockpit": "bun scripts/devcockpit.js || tsx scripts/devcockpit.js",
-    "format": "prettier --write .",
-    "lint": "eslint .",
-    "docs:ts": "typedoc",
-    "test": "vitest run --config packages/tsdk/vitest.config.ts",
-    "/* --- Distribution: Consumer Scripts --- */": "",
+    "sync-binaries": "node dist/sync-binaries.js || npx tsx scripts/sync-binaries.ts",
+
+    "/* --- Development & Workflows --- */": "",
+    "postinstall": "",
     "install:dev": "cross-env TSR_DEV=true pnpm install",
-    "prepare": "pnpm run build",
-    "build": "tsup packages/tsdk/src/index.ts scripts/cli.ts scripts/sync-binaries.ts --format esm --dts --clean --out-dir dist",
-    "postinstall": "node dist/sync-binaries.js || npx tsx scripts/sync-binaries.ts"
+    "cockpit": "bun scripts/devcockpit.js || tsx scripts/devcockpit.js",
+
+    "/* --- Quality Assurance & Docs --- */": "",
+    "test": "vitest run --config packages/tsdk/vitest.config.ts",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "docs:ts": "typedoc"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.11.0",
-    "commander": "^14.0.3",
-    "chalk": "^5.3.0"
+    "chalk": "^5.3.0",
+    "commander": "^14.0.3"
   },
   "devDependencies": {
     "@bufbuild/protoc-gen-es": "^2.11.0",
@@ -52,14 +58,11 @@
     "eslint": "^10.0.2",
     "prettier": "^3.2.0",
     "shx": "^0.4.0",
-    "tsx": "^4.21.0",
     "tsup": "^8.0.2",
+    "tsx": "^4.21.0",
     "typedoc": "^0.28.17",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
-  },
-  "engines": {
-    "node": ">= 18"
   },
   "workspaces": [
     "packages/*",
