@@ -1,45 +1,87 @@
 # SDK Usage Examples
 
-This document provides comprehensive usage examples for the ckir/tsrlib SDK, covering initialization, logging, market data retrieval, HTTP client usage, and configuration management.
+## Initialization
 
-## 1. SDK Initialization
 To initialize the SDK, use the following code:
 ```javascript
-const SDK = require('tsrlib');
-
-const sdk = new SDK({
+const sdk = require('tsrlib');
+const instance = sdk.initialize({
     apiKey: 'YOUR_API_KEY',
-    apiSecret: 'YOUR_API_SECRET',
+    environment: 'production'
 });
 ```
 
-## 2. Logging
-To enable logging, you can set the logging level during initialization:
+## Logging
+
+The SDK provides built-in logging functionality. You can configure and use it as follows:
 ```javascript
-const sdk = new SDK({
-    apiKey: 'YOUR_API_KEY',
-    apiSecret: 'YOUR_API_SECRET',
-    logLevel: 'DEBUG',  // Possible values: DEBUG, INFO, WARN, ERROR
+const logger = sdk.getLogger();
+logger.setLevel('DEBUG');
+logger.info('SDK initialized successfully');
+```
+
+## Market Data Retrieval
+
+To retrieve market data, use the following function:
+```javascript
+instance.marketData.fetch({
+    symbol: 'AAPL'
+}).then(data => {
+    console.log('Market Data:', data);
+}).catch(error => {
+    logger.error('Error fetching market data:', error);
 });
 ```
 
-## 3. Market Data Retrieval
-To retrieve market data, use the following example:
+## HTTP Client Usage
+
+Make API calls using the SDK's HTTP client:
 ```javascript
-const marketData = await sdk.getMarketData('BTC/USD');
-console.log(marketData);
+instance.httpClient.get('/api/v1/resource')
+    .then(response => {
+        console.log('Response:', response.data);
+    })
+    .catch(error => {
+        logger.error('Error making API call:', error);
+    });
 ```
 
-## 4. HTTP Client
-For custom HTTP requests, use the HTTP client provided by the SDK:
+## Configuration Management
+
+You can manage configurations like this:
 ```javascript
-const response = await sdk.httpClient.get('/path/to/resource');
-console.log(response.data);
+instance.config.set('timeout', 5000);
+const timeout = instance.config.get('timeout');
+console.log('Timeout set to:', timeout);
 ```
 
-## 5. Configuration Management
-To manage configuration settings, you can use:
+## Error Handling
+
+Proper error handling is crucial. Use try-catch blocks:
 ```javascript
-sdk.config.set('key', 'value');
-const value = sdk.config.get('key');
+try {
+    const data = await instance.marketData.fetch({ symbol: 'TSLA' });
+    console.log(data);
+} catch (error) {
+    logger.error('Fetching data failed:', error.message);
+}
+```
+
+## Real-World Scenarios
+
+Here’s a complete example combining several features:
+```javascript
+async function main() {
+    try {
+        const instance = sdk.initialize({ apiKey: 'YOUR_API_KEY' });
+        logger.info('SDK initialized');
+
+        const marketData = await instance.marketData.fetch({ symbol: 'GOOGL' });
+        console.log('Market data for GOOGL:', marketData);
+    } catch (error) {
+        logger.error('An error occurred:', error.message);
+    }
+}
+
+main();
 ```
