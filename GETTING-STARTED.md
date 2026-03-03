@@ -1,42 +1,44 @@
-# TSRLIB — Getting Started Guide
+# Setup Guide for tsrlib
 
-^**TSRLIB^*** is a high-performance TypeScript SDK with a native Rust bridge (via NAPI-RS).  
-It gives you:
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ckir/tsrlib.git
+   cd tsrlib
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-- Ultra-fast Rust-powered core (tracing, status checks)
-- Production-grade logging & telemetry (streams to Vector sidecar)
-- Resilient HTTP client (`RequestUnlimited`)
-- Real-time market data (Nasdaqk + Yahoo Finance streaming)
-- Config management, utilities, and more
+## Binary Setup
+1. Build the project:
+   ```bash
+   npm run build
+   ```
+2. Install the binary globally (optional):
+   ```bash
+   npm install -g ./dist
+   ```
 
-Works perfectly on **Windows, Linux, macOS** (x64 + arm64) with **Node.js** and **Bun**.
+## Configuration
+1. Create a configuration file `config.json` in the root directory. Example configuration:
+   ```json
+   {
+     "option1": "value1",
+     "option2": "value2"
+   }
+   ```
+2. Ensure the settings match your environment requirements.
 
----
+## Basic Usage Examples
+1. Run the binary:
+   ```bash
+   tsrlib --config config.json
+   ```
+2. Example command with options:
+   ```bash
+   tsrlib --option1 value
+   ```
 
-
-## 1. Installation
-
-bash
-# npm
-npm install tsrlib
-
-# pnpm (recommended)
-pnpm add tsrlib
-
-# Bun
-bun add tsrlib
-
-
----
-
-## 2. One-Time Setup: Download Binaries
-
-TSRLIB needs three binaries:
-- `rsdk.node` — Native Rust bridge
-- `vector` — Telemetry sidecar
-- `caddy` — API proxy (optional)
-
-Run this **once** after installation (or after every major update):
-
-bash
-npx tsx ./node_modules/tsrlib/packages/sidecars/src/sync-binaries.ts
+For more detailed usage, refer to the official documentation or help command: `tsrlib --help`.
