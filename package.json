@@ -34,8 +34,9 @@
     "test": "vitest run --config packages/tsdk/vitest.config.ts",
     "/* --- Distribution: Consumer Scripts --- */": "",
     "install:dev": "cross-env TSR_DEV=true pnpm install",
-    "build": "tsup packages/tsdk/src/index.ts scripts/cli.ts --format esm --dts --clean --out-dir dist",
-    "postinstall": "node -e \"const { execSync } = require('child_process'); try { execSync('bun --version', { stdio: 'ignore' }); execSync('bun run scripts/sync-binaries.ts', { stdio: 'inherit' }); } catch (e) { execSync('tsx scripts/sync-binaries.ts', { stdio: 'inherit' }); }\""
+    "prepare": "pnpm run build",
+    "build": "tsup packages/tsdk/src/index.ts scripts/cli.ts scripts/sync-binaries.ts --format esm --dts --clean --out-dir dist",
+    "postinstall": "node dist/sync-binaries.js || npx tsx scripts/sync-binaries.ts"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.11.0",
