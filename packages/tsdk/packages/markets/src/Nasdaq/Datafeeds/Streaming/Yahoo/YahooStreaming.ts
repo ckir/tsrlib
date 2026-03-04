@@ -4,23 +4,12 @@
  * Provides real-time ticker updates with robust reconnection logic, silence detection,
  * and database persistence. Uses Protocol Buffers for message parsing.
  * 
- * FIXED (2026-03-04): Replaced 'new Logger' with 'Logger.logger.child' to resolve 
- * the 'not constructable' error. The Logger is exported as an object { logger: pino.Logger },
- * so we access the instance via Logger.logger and create a child logger for this class.
- * This maintains all existing features like logging, streaming, reconnection, metrics,
- * and database integration without any changes to functionality.
- * 
- * Additional fixes:
- * - Adjusted logger calls to use object as first param for structured logging, 
- *   resolving overload mismatches (e.g., logger.error({ error }, 'Message')).
- * - Replaced non-existent db.insert with SQL query for INSERT, assuming Database.query 
- *   is the available method (common in SQLite wrappers like better-sqlite3).
- * - Corrected PricingData field names: 'timeStamp' -> 'time', 'volume' -> 'dayVolume'.
- * - Added table creation in start() to ensure 'yahoo_tickers' exists.
- * - Made handleMessage async to handle potential async query, but if query is sync,
- *   it works either way. Assumed query is promise-based for safety.
- * - Converted message.time from BigInt to number for DateTime.fromMillis,
- *   resolving type mismatch (BigInt from protobuf int64).
+ * FIXED (2026-03-04):
+ *   • Replaced 'new Logger' with 'Logger.logger.child'
+ *   • Added private isStopped flag so that stop() truly prevents reconnection
+ *     (the previous close() event was triggering reconnect()).
+ *   • All existing behaviour (DB persistence, metrics, silence watchdog, backoff)
+ *     is preserved.
  */
 
 import { EventEmitter } from 'node:events';
@@ -58,6 +47,9 @@ export class YahooStreaming extends EventEmitter {
     errors: 0,
   };
 
+  /** Prevents reconnection after explicit stop() */
+  private isStopped = false;
+
   private readonly logger = Logger.logger.child({
     section: 'YahooStreaming',
     source_type: 'tsdk',
@@ -71,7 +63,9 @@ export class YahooStreaming extends EventEmitter {
   }
 
   public async start(subscriptions: string[]): Promise<void> {
+    this.isStopped = false;
     this.subscriptions = new Set(subscriptions);
+
     // Create table if not exists
     await this.db.query(`
       CREATE TABLE IF NOT EXISTS yahoo_tickers (
@@ -84,11 +78,13 @@ export class YahooStreaming extends EventEmitter {
         change_percent REAL
       )
     `);
+
     await this.connect();
     this.setupSummaryLogging();
   }
 
   public async stop(): Promise<void> {
+    this.isStopped = true;
     this.clearTimers();
     if (this.ws) {
       this.ws.close();
@@ -98,6 +94,8 @@ export class YahooStreaming extends EventEmitter {
   }
 
   private async connect(): Promise<void> {
+    if (this.isStopped) return;
+
     try {
       this.ws = new WebSocket(YahooStreaming.WS_URL);
       
@@ -130,6 +128,7 @@ export class YahooStreaming extends EventEmitter {
   }
 
   private reconnect(): void {
+    if (this.isStopped) return;
     this.clearTimers();
     setTimeout(() => this.connect(), this.backoffMs);
     this.backoffMs = Math.min(this.backoffMs * 2, 60000);
@@ -149,7 +148,6 @@ export class YahooStreaming extends EventEmitter {
       const message = fromBinary(PricingDataSchema, data);
       this.metrics.messagesReceived++;
       
-      // Persist to database using query (since insert doesn't exist)
       await this.db.query(
         `INSERT INTO yahoo_tickers (symbol, timestamp, price, volume, market_hours, change, change_percent) 
          VALUES (?, ?, ?, ?, ?, ?, ?)`,

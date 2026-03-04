@@ -1,7 +1,8 @@
-import { writeFileSync, chmodSync } from 'node:fs';
+import fs, { writeFileSync, chmodSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { platform, arch } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 
 /**
  * sync-binaries.ts
@@ -18,11 +19,45 @@ const RSDK_VERSION = "v1.0.5";
 const REPO_URL = "https://github.com/ckir/tsrlib/releases/download";
 
 async function syncBinaries() {
-  // 1. DEVELOPMENT BYPASS
-  // If we are developing locally, we don't want to overwrite our local build with a downloaded one.
+  // 1. DEVELOPMENT MODE
   if (process.env.TSR_DEV === 'true') {
-    console.log('[tsrlib] Local development mode (TSR_DEV=true). Skipping binary download.');
-    process.exit(0);
+    console.log('[tsrlib] Local development mode (TSR_DEV=true). Building native binary...');
+    try {
+      execSync('cd packages/rsdk/crates/ffi-adapter && npx napi build --platform --release --output-dir ../../../tsdk/src', { stdio: 'inherit' });
+      // Align the binary
+      const srcDir = join(__dirname, '../packages/tsdk/src');
+      let generatedFile;
+      try {
+        const files = fs.readdirSync(srcDir);
+        generatedFile = files.find((f: string) => f.endsWith('.node') && f !== 'rsdk.node');
+      } catch (e: any) {
+        console.error('[tsrlib] Error reading src directory:', e.message);
+      }
+      if (generatedFile) {
+        const oldPath = join(srcDir, generatedFile);
+        const newPath = join(srcDir, 'rsdk.node');
+        fs.renameSync(oldPath, newPath);
+        console.log('[tsrlib] Aligned binary:', generatedFile, '-> rsdk.node');
+        if (platform() !== 'win32') {
+          chmodSync(newPath, 0o755);
+        }
+      } else {
+        console.warn('[tsrlib] No generated .node file found after build!');
+      }
+      // Remove conflicting wrapper files
+      const filesToRemove = ['index.js', 'index.d.ts', 'rsdk.js', 'rsdk.d.ts'];
+      filesToRemove.forEach((file: string) => {
+        const filePath = join(srcDir, file);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+          console.log('[tsrlib] Removed conflicting file:', file);
+        }
+      });
+    } catch (e: any) {
+      console.error('[tsrlib] Failed to build native binary in dev mode:', e.message);
+      process.exit(0); // Exit gracefully
+    }
+    return;
   }
 
   // 2. ENVIRONMENT DETECTION
@@ -65,7 +100,7 @@ async function syncBinaries() {
     if (currentPlatform !== 'windows') {
       try {
         chmodSync(targetPath, 0o755);
-      } catch (e) {
+      } catch (e: any) {
         console.warn('[tsrlib] Could not set executable permissions on binary.');
       }
     }

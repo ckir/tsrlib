@@ -5,15 +5,24 @@
   "private": false,
   "type": "module",
   "engines": {
-    "node": ">= 18"
+    "node": ">=18"
   },
-  "main": "./dist/packages/tsdk/src/index.js",
-  "module": "./dist/packages/tsdk/src/index.js",
-  "types": "./dist/packages/tsdk/src/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/packages/tsdk/src/index.js",
-      "types": "./dist/packages/tsdk/src/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./rsdk": {
+      "types": "./dist/rsdk.d.ts",
+      "default": "./dist/rsdk.js"
+    },
+    "./tsdk": {
+      "types": "./dist/tsdk.d.ts",
+      "default": "./dist/tsdk.js"
+    },
+    "./cli": {
+      "types": "./dist/scripts/cli.d.ts",
+      "default": "./dist/scripts/cli.js"
     }
   },
   "bin": {
@@ -22,50 +31,48 @@
   "files": [
     "dist",
     "packages/sidecars/vector/vector.toml",
-    "packages/sidecars/caddy/Caddyfile"
+    "packages/sidecars/caddy/Caddyfile",
+    "LICENSE",
+    "README.md",
+    "USAGE.md",
+    "GETTING-STARTED.md"
   ],
   "scripts": {
-    "/* --- Build & Distribution --- */": "",
     "prepare": "pnpm run build && pnpm run sync-binaries",
-    "build": "tsup packages/tsdk/src/index.ts scripts/cli.ts scripts/sync-binaries.ts --format esm --dts --clean --out-dir dist",
-    "build:ffi": "napi build --platform --esm -p rsdk-ffi --release --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts",
-    "build:ffi:debug": "napi build --platform --esm -p rsdk-ffi --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts",
-    "artifacts": "napi artifacts --dist packages/tsdk/npm",
+    "build": "tsup scripts/cli.ts scripts/devcockpit.js scripts/start-sidecars.ts scripts/sync-binaries.ts packages/tsdk/src/index.ts packages/tsdk/src/rsdk-loader.ts packages/tsdk/src/rsdk.ts packages/tsdk/packages/*/src/index.ts --format esm --dts --out-dir dist",
+    "build:ffi": "cd packages/rsdk/crates/ffi-adapter && npx napi build --platform --release --output-dir ../../../tsdk/src",
+    "build:ffi:debug": "cd packages/rsdk/crates/ffi-adapter && npx napi build --platform --output-dir ../../../tsdk/src",
     "sync-binaries": "node dist/scripts/sync-binaries.js || npx tsx scripts/sync-binaries.ts",
-
-    "/* --- Development & Workflows --- */": "",
-    "postinstall": "",
-    "install:dev": "cross-env TSR_DEV=true pnpm install",
-    "cockpit": "bun scripts/devcockpit.js || tsx scripts/devcockpit.js",
-
-    "/* --- Quality Assurance & Docs --- */": "",
-    "test": "vitest run --config packages/tsdk/vitest.config.ts",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "docs:ts": "typedoc"
+    "start-sidecars": "bun scripts/start-sidecars.ts",
+    "devcockpit": "node dist/scripts/devcockpit.js",
+    "cli": "node dist/scripts/cli.js",
+    "lint": "eslint . --ext .ts --fix",
+    "test": "vitest",
+    "docs": "typedoc"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.11.0",
-    "chalk": "^5.3.0",
-    "commander": "^14.0.3"
+    "@napi-rs/cli": "^3.5.1",
+    "luxon": "^3.4.4",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
-    "@bufbuild/protoc-gen-es": "^2.11.0",
-    "@napi-rs/cli": "^3.0.0-alpha.63",
-    "@types/bun": "^1.3.9",
-    "@types/node": "^25.3.2",
-    "cross-env": "^10.1.0",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^25.3.3",
+    "@types/ws": "^8.5.10",
     "eslint": "^10.0.2",
-    "prettier": "^3.2.0",
-    "shx": "^0.4.0",
     "tsup": "^8.0.2",
-    "tsx": "^4.21.0",
     "typedoc": "^0.28.17",
-    "typescript": "^5.9.3",
+    "typescript": "^5.3.3",
     "vitest": "^4.0.18"
   },
-  "workspaces": [
-    "packages/*",
-    "packages/tsdk/packages/*"
+  "repository": "github:ckir/tsrlib",
+  "license": "MIT",
+  "keywords": [
+    "sdk",
+    "tsdk",
+    "rsdk",
+    "rust",
+    "typescript"
   ]
 }

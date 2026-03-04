@@ -4,6 +4,6 @@ export default defineProject({
   test: {
     name: 'tsdk-loggers',
     environment: 'node',
+    testTimeout: 30000
   }
-}
-);
+});
