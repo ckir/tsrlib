@@ -6,7 +6,8 @@
   "main": "./src/index.ts",
   "peerDependencies": {
     "@libsql/client": "^0.17.0",
-    "pg": "^8.11.0"
+    "pg": "^8.11.0",
+    "serialize-error": "^13.0.1"
   },
   "peerDependenciesMeta": {
     "@libsql/client": { "optional": true },
