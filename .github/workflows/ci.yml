@@ -34,7 +34,7 @@ jobs:
           toolchain: stable
 
       - name: Install Dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
         env:
           # Bypass the prebuilt binary download hook; we build it fresh below
           TSR_DEV: "true"
