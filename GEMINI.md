@@ -1,19 +1,19 @@
-# GEMINI System Documentation
+# tsrlib System Documentation
 
 ## Architecture Summary
-The GEMINI system is built on a modular architecture that allows for easy integration and scalability. It consists of various components including the core AI engine, data management subsystem, and user interface.
+The tsrlib system is built on a modular architecture that allows for easy integration and scalability. It consists of various components including the core AI engine, data management subsystem, and user interface.
 
 ## FFI Bridge Details
-The Foreign Function Interface (FFI) bridge allows GEMINI to interface with other programming languages. It provides a seamless way to execute cross-language calls, facilitating the integration of external libraries if needed.
+The Foreign Function Interface (FFI) bridge allows tsrlib to interface with other programming languages. It provides a seamless way to execute cross-language calls, facilitating the integration of external libraries if needed.
 
 ## Sidecar Infrastructure
-GEMINI uses a sidecar model for deploying auxiliary services. This includes logging, monitoring, and performance tracking, allowing for better observability without cluttering the main application.
+tsrlib uses a sidecar model for deploying auxiliary services. This includes logging, monitoring, and performance tracking, allowing for better observability without cluttering the main application.
 
 ## Telemetry Pipeline
-The telemetry pipeline captures important metrics and logs from the GEMINI system. This data is then processed and sent to a centralized logging service for analysis and troubleshooting purposes.
+The telemetry pipeline captures important metrics and logs from the tsrlib system. This data is then processed and sent to a centralized logging service for analysis and troubleshooting purposes.
 
 ## Type-Safety Guidelines
-To ensure type safety within the GEMINI application, it is crucial to follow strict typing conventions and guidelines. Use TypeScript interfaces and types wherever possible to prevent runtime errors and ensure predictability.
+To ensure type safety within the tsrlib application, it is crucial to follow strict typing conventions and guidelines. Use TypeScript interfaces and types wherever possible to prevent runtime errors and ensure predictability.
 
 ## Development Workflow
 Developers should follow the recommended workflow:
@@ -33,4 +33,4 @@ Developers should follow the recommended workflow:
 - **Issue:** Performance lag in processing.
   - **Solution:** Review the telemetry data for bottlenecks.
 
-For additional support, refer to the official GEMINI documentation or contact the support team.
+For additional support, refer to the official tsrlib documentation or contact the support team.
