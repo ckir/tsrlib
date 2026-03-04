@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@tsrlib/*": ["packages/tsdk/packages/*/src/index.ts"]
+      "@tsrlib/*": ["packages/tsdk/packages/*/src/index.ts"],
+      "@tsrlib/tsdk": ["packages/tsdk/src/index.ts"]
     }
   },
   "include": ["packages/**/*.ts"],

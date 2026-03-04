@@ -38,6 +38,7 @@ export default defineConfig({
       '@tsrlib/markets': path.resolve(__dirname, './packages/markets/src/index.ts'),
       '@tsrlib/retrieve': path.resolve(__dirname, './packages/retrieve/src/index.ts'),
       '@tsrlib/utils': path.resolve(__dirname, './packages/utils/src/index.ts'),
+      '@tsrlib/tsdk': path.resolve(__dirname, './src/index.ts'),
     },
 
     // Handling for Native Modules & ESM

@@ -113,6 +113,9 @@ importers:
       pg:
         specifier: ^8.11.0
         version: 8.19.0
+      serialize-error:
+        specifier: ^13.0.1
+        version: 13.0.1
 
   packages/tsdk/packages/loggers:
     dependencies:
