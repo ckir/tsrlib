@@ -7,17 +7,17 @@
   "engines": {
     "node": ">= 18"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/packages/tsdk/src/index.js",
+  "module": "./dist/packages/tsdk/src/index.js",
+  "types": "./dist/packages/tsdk/src/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/packages/tsdk/src/index.js",
+      "types": "./dist/packages/tsdk/src/index.d.ts"
     }
   },
   "bin": {
-    "tsrlib": "./dist/cli.js"
+    "tsrlib": "./dist/scripts/cli.js"
   },
   "files": [
     "dist",
@@ -31,7 +31,7 @@
     "build:ffi": "napi build --platform --esm -p rsdk-ffi --release --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts",
     "build:ffi:debug": "napi build --platform --esm -p rsdk-ffi --js ../../../tsdk/src/rsdk.js --dts ../../../tsdk/src/rsdk.d.ts",
     "artifacts": "napi artifacts --dist packages/tsdk/npm",
-    "sync-binaries": "node dist/sync-binaries.js || npx tsx scripts/sync-binaries.ts",
+    "sync-binaries": "node dist/scripts/sync-binaries.js || npx tsx scripts/sync-binaries.ts",
 
     "/* --- Development & Workflows --- */": "",
     "postinstall": "",
